@@ -4,7 +4,9 @@ from tkinter import ttk
 import tkinter as tk
 
 def janela2():
-    
+    janela2 = Toplevel()
+    janela2.geometry('600x600')
+    janela2.withdraw()
     mybd = mysql.connector.connect(
         host='localhost',
         user='root',
@@ -13,6 +15,10 @@ def janela2():
     )
     mc = mybd.cursor()
     mc.execute('SELECT * FROM admins')
+
+    lista1 = Listbox(janela2)
+    lista2 = Listbox(janela2)
+    lista3 = Listbox(janela2)
 
     mr = mc.fetchall()
     for x in mr:
@@ -23,22 +29,17 @@ def janela2():
         xc2 = str(xb2[1:-2])
         xb3 = xa[2]
         xc3 = int(xb3[:-1])
+
+        lista1.insert(END, xc1)
+        lista2.insert(END, xc2)
+        lista3.insert(END, xc3)
+
         if xc2 == str(entry_user.get()) and xc3 == int(entry_senha.get()):
+            janela2.deiconify()
+            lista1.place(x=20, y=40, width=20, height=50)
+            lista2.place(x=70, y=40, width=100, height=50)
+            lista3.place(x=190, y=40, width=50, height=50)
 
-            print('1')
-            janela2 = Tk()
-            janela2.geometry('300x200')
-            lista1 = Listbox(janela2)
-            lista2 = Listbox(janela2)
-            lista3 = Listbox(janela2)
-
-            lista1.insert(END, xc1)
-            lista2.insert(END, xc2)
-            lista3.insert(END, xc3)
-
-            lista1.place(x=20, y=20, width=30)
-            lista2.place(x=70, y=20, width=100)
-            lista3.place(x=190, y=20, width=50)
 
 
 janela = Tk()
