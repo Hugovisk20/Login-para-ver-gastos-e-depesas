@@ -4,9 +4,7 @@ from tkinter import ttk
 import tkinter as tk
 
 def janela2():
-    janela2 = Tk()
-
-
+    
     mybd = mysql.connector.connect(
         host='localhost',
         user='root',
@@ -18,16 +16,29 @@ def janela2():
 
     mr = mc.fetchall()
     for x in mr:
-        print(x)
-    tree = ttk.Treeview(janela2, columns=('id', 'login', 'senha'), show='headings')
-    tree.column('id', width=30, minwidth=0)
-    tree.column('login', width=80, minwidth=0)
-    tree.column('senha', width=50, minwidth=0)
-    tree.heading('id', text='ID')
-    tree.heading('login', text='LOGIN')
-    tree.heading('senha', text='SENHA')
-    tree.insert('', END, values='oi')
-    janela2.mainloop()
+        xa = str(x).split()
+        xb1 = xa[0]
+        xc1 = [int(xb1[1])]
+        xb2 = xa[1]
+        xc2 = str(xb2[1:-2])
+        xb3 = xa[2]
+        xc3 = int(xb3[:-1])
+        if xc2 == str(entry_user.get()) and xc3 == int(entry_senha.get()):
+
+            print('1')
+            janela2 = Tk()
+            janela2.geometry('300x200')
+            lista1 = Listbox(janela2)
+            lista2 = Listbox(janela2)
+            lista3 = Listbox(janela2)
+
+            lista1.insert(END, xc1)
+            lista2.insert(END, xc2)
+            lista3.insert(END, xc3)
+
+            lista1.place(x=20, y=20, width=30)
+            lista2.place(x=70, y=20, width=100)
+            lista3.place(x=190, y=20, width=50)
 
 
 janela = Tk()
