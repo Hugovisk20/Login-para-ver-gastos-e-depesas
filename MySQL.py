@@ -5,7 +5,7 @@ import tkinter as tk
 
 def janela2():                          #FUNÇÃO PARA SE CONECTAR AO MYSQL E ABRIR A JANELA2
     janela2 = Toplevel()                #CRIA A JANELA2
-    janela2.geometry('600x600')
+    janela2.geometry('400x500')
     janela2.withdraw()                  #OCULTA A JANELA2
     mybd = mysql.connector.connect(     #COMANDO PARA SE CONECTAR AO BANCO MYSQL
         host='localhost',
@@ -41,11 +41,12 @@ def janela2():                          #FUNÇÃO PARA SE CONECTAR AO MYSQL E AB
         #SE XC2 FOR = AO QUE ESTIVER ESCRITO NO ENTRY_USER E O XC3 NO ENTRY_SENHA, A JANELA2 É MOSTRADA
         if xc2 == str(entry_user.get()) and xc3 == int(entry_senha.get()):
             janela2.deiconify()         #MOSTRA A JANELA2 QUE ESTAVA OCULTADA
+            janela.withdraw()
             lista1.place(x=20, y=40, width=20, height=50)# POSIÇÃO DOS LISTBOX
-            lista2.place(x=70, y=40, width=100, height=50)
-            lista3.place(x=190, y=40, width=50, height=50)
-
-
+            lista2.place(x=45, y=40, width=100, height=50)
+            lista3.place(x=150, y=40, width=50, height=50)
+            lbl_id = Label(janela2, text='ID')
+            lbl_id.place(x=20, y=20)
 
 janela = Tk()
 janela.geometry('400x500')
@@ -54,7 +55,7 @@ lbl_imagem = Label(janela, image=imagem)
 lbl_imagem.place(x=0, y=0)
 lbl_user = Label(janela, text='Insira um user admin', background='#ffffff', font='arial 10')
 lbl_user.place(x=123, y=70 )
-lbl_senha = Label(janela, text='Inseira sua senha', background='#ffffff', font='arial 10')
+lbl_senha = Label(janela, text='Insira sua senha', background='#ffffff', font='arial 10')
 lbl_senha.place(x=123, y=120)
 
 
