@@ -1,13 +1,43 @@
-import mysql.connector                  #IMPORTA BIBLIOTECA PARA CONECTAR AO MYSQL
-from tkinter import *                   #IMPORTA TKINTER
+import mysql.connector
+from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 
-def janela2():                          #FUNÇÃO PARA SE CONECTAR AO MYSQL E ABRIR A JANELA2
-    janela2 = Toplevel()                #CRIA A JANELA2
+def exportar_dados():
+    mydb = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='17032005',
+        database='pizzaria'
+    )
+    mc = mydb.cursor()
+    ins = 'INSERT INTO produtos (nome, preço) VALUES (%s, %s)'
+    val = f'{str(entry_1.get())}', f' {float(entry_2.get())}'
+    mc.execute(ins, val)
+
+    mydb.commit()
+
+def excluir_dados():
+    mydb = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='17032005',
+        database='pizzaria'
+    )
+    mc = mydb.cursor()
+
+    if entry_4.get() == '':
+        mc.execute(f'DELETE FROM produtos WHERE id_produto = {int(entry_3.get())}')
+        mydb.commit()
+    elif entry_3.get() == '':
+        mc.execute(f'DELETE FROM produtos WHERE nome = "{str(entry_4.get())}"')
+        mydb.commit()
+
+def janela2():
+    janela2 = Tk()
     janela2.geometry('400x500')
-    janela2.withdraw()                  #OCULTA A JANELA2
-    mybd = mysql.connector.connect(     #COMANDO PARA SE CONECTAR AO BANCO MYSQL
+    janela2.withdraw()
+    mybd = mysql.connector.connect(
         host='localhost',
         user='root',
         password='17032005',
@@ -17,10 +47,6 @@ def janela2():                          #FUNÇÃO PARA SE CONECTAR AO MYSQL E AB
     mc.execute('SELECT * FROM admins')  #SELECIONA/MOSTRA OS DADOS DA TABELA ADMINS
     #A TABELA NO MYSQL CONSITE EM 3 COLUNAS; ID, LOGIN E SENHA RESPECTIVAMENTE
     #OS DADOS DA TABELA SÃO GUARDADOS EM UMA LISTA []
-
-    lista1 = Listbox(janela2)           #VARIÁVEIS DE LISTBOX
-    lista2 = Listbox(janela2)
-    lista3 = Listbox(janela2)
 
     mr = mc.fetchall()                  #GUARDA OS DADOS DA TABELA ADMINS
     for x in mr:                        #PARA CADA ELEMENTO...
@@ -35,20 +61,38 @@ def janela2():                          #FUNÇÃO PARA SE CONECTAR AO MYSQL E AB
         xb3 = xa[2]                     #XB3<- GUARDA 0 3° ELEMENTO DE XA
         xc3 = int(xb3[:-1])             #XC3<- GUARDARÁ A SENHA
 
-        lista1.insert(END, xc1)         #INSERI OS VALORES NAS LISTBOX
-        lista2.insert(END, xc2)
-        lista3.insert(END, xc3)
-        #SE XC2 FOR = AO QUE ESTIVER ESCRITO NO ENTRY_USER E O XC3 NO ENTRY_SENHA, A JANELA2 É MOSTRADA
         if xc2 == str(entry_user.get()) and xc3 == int(entry_senha.get()):
-            janela2.deiconify()         #MOSTRA A JANELA2 QUE ESTAVA OCULTADA
+            janela2.deiconify()
+            janela2.title(string='Cadastrar produtos')
             janela.withdraw()
-            lista1.place(x=20, y=40, width=20, height=50)# POSIÇÃO DOS LISTBOX
-            lista2.place(x=45, y=40, width=100, height=50)
-            lista3.place(x=150, y=40, width=50, height=50)
-            lbl_id = Label(janela2, text='ID')
-            lbl_id.place(x=20, y=20)
+            janela.destroy()
+            global entry_1
+            global entry_2
+            global entry_3
+            global entry_4
+            entry_1 = Entry(janela2)
+            entry_1.place(x=20, y=40, width=150)
+            entry_2 = Entry(janela2)
+            entry_2.place(x=20, y=100, width=150)
+            entry_3 = Entry(janela2)
+            entry_3.place(x=225, y=40, width=150)
+            entry_4 = Entry(janela2)
+            entry_4.place(x=225, y=100, width=150)
+            lbl1 = Label(janela2, text='Qual o nome do produto?')
+            lbl1.place(x=20, y=10)
+            lbl2 = Label(janela2, text='Qual é o preço do produto?')
+            lbl2.place(x=20, y=70)
+            lbl3 = Label(janela2, text='ID do produto')
+            lbl3.place(x=225, y=10)
+            lbl4 = Label(janela2, text='Nome do produto')
+            lbl4.place(x=225, y=70)
+            btn_cadastrar = Button(janela2, text='Cadastrar', command=exportar_dados)
+            btn_cadastrar.place(x=20, y=130, width=70, height=30)
+            btn_deletar = Button(janela2, text='Deletar', command=excluir_dados)
+            btn_deletar.place(x=305, y=130, width=70, height=30)
 
 janela = Tk()
+janela.title(string='Inicio')
 janela.geometry('400x500')
 imagem = PhotoImage(file= 'C:/Users/hugot/OneDrive/Imagens/Saved Pictures/pizza.png')
 lbl_imagem = Label(janela, image=imagem)
