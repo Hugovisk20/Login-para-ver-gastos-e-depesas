@@ -1,114 +1,122 @@
+#--------------------IMPORTAÇÃO DE BIBLOTECAS-------------------#
 import mysql.connector
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
+#--------------------FUNÇÕES-------------------#
 
-def exportar_dados():
-    mydb = mysql.connector.connect(
+#---FUNÇÃO PARA INSERIR OS DADOS DAS ENTRADAS NO BANCO---#
+def inserir_dados():
+    mydb = mysql.connector.connect(     #CONECTA O PYTHON AO MYSQL
         host='localhost',
         user='root',
         password='17032005',
         database='pizzaria'
     )
     mc = mydb.cursor()
-    ins = 'INSERT INTO produtos (nome, preço) VALUES (%s, %s)'
-    val = f'{str(entry_1.get())}', f' {float(entry_2.get())}'
-    mc.execute(ins, val)
+    ins = 'INSERT INTO produtos (nome, preço) VALUES (%s, %s)'  #COMANDO SQL PARA INSERIR DADOS NA TABELA DO BANDO
+    val = f'{str(entry_in_nome.get())}', f' {float(entry_in_preco.get())}'   #VALORES A SEREM INSERIDOS
+    mc.execute(ins, val)    #EXECUTA O COMANDO JUNTO AOS VALORES
+    mydb.commit()   #NECESSARIO PARA FAZER AS ALTERAÇÕES
 
-    mydb.commit()
-
+#---FUNÇÃO PARA DELETAR LINHAS DA TABELA DO BANCO---#
 def excluir_dados():
-    mydb = mysql.connector.connect(
+    mydb = mysql.connector.connect(     #CONECTA O PYTHON AO MYSQL
         host='localhost',
         user='root',
         password='17032005',
         database='pizzaria'
     )
     mc = mydb.cursor()
-
-    if entry_4.get() == '':
-        mc.execute(f'DELETE FROM produtos WHERE id_produto = {int(entry_3.get())}')
+    #---IF PARA SABER QUAL COMANDO EXECUTAR---#
+    if entry_ex_nome.get() == '':
+        mc.execute(f'DELETE FROM produtos WHERE id_produto = {int(entry_ex_id.get())}')
         mydb.commit()
-    elif entry_3.get() == '':
-        mc.execute(f'DELETE FROM produtos WHERE nome = "{str(entry_4.get())}"')
+    elif entry_ex_id.get() == '':
+        mc.execute(f'DELETE FROM produtos WHERE nome = "{str(entry_ex_nome.get())}"')
+        mydb.commit()
+    elif entry_ex_id.get() and entry_ex_nome.get() != '':
+        mc.execute(f'DELETE FROM produtos WHERE id_produto = {int(entry_ex_id.get())}')
         mydb.commit()
 
-def janela2():
-    janela2 = Tk()
-    janela2.geometry('400x500')
-    janela2.withdraw()
-    mybd = mysql.connector.connect(
+#---FUNÇÃO PARA ABRIR A JANELA DE CADASTRO---#
+def janela_cadasto_abrir():
+    mybd = mysql.connector.connect(     #CONECTA O PYTHON AO MYSQL
         host='localhost',
         user='root',
         password='17032005',
         database='pizzaria'
     )
     mc = mybd.cursor()
-    mc.execute('SELECT * FROM admins')  #SELECIONA/MOSTRA OS DADOS DA TABELA ADMINS
-    #A TABELA NO MYSQL CONSITE EM 3 COLUNAS; ID, LOGIN E SENHA RESPECTIVAMENTE
-    #OS DADOS DA TABELA SÃO GUARDADOS EM UMA LISTA []
+    mc.execute('SELECT * FROM admins')  #COMANDO SQL PARA SELECIONAR A TABELA DO BANCO
 
-    mr = mc.fetchall()                  #GUARDA OS DADOS DA TABELA ADMINS
-    for x in mr:                        #PARA CADA ELEMENTO...
-        #SEPARA SOMENTE O ID DA TABELA MYSQL
-        xa = str(x).split()             #XA<- DIVIDI OS ELEMETO DA TABELA E GUARDA EM UMA LISTA
-        xb1 = xa[0]                     #XB1<- GUARDA O 1° ELEMENTO DE XA
-        xc1 = [int(xb1[1])]             #XC1<- GUARDARÁ O ID
-        #SEPARA SOMENTE O LOGIN DA TABELA MYSQL
-        xb2 = xa[1]                     #XB2<- GUARDA O 2° ELEMENTO DE XA
-        xc2 = str(xb2[1:-2])            #XC2<- GUARDARÁ O LOGIN
-        #SEPARA SOMENTE A SENHA DA TABELA MYSQL
-        xb3 = xa[2]                     #XB3<- GUARDA 0 3° ELEMENTO DE XA
-        xc3 = int(xb3[:-1])             #XC3<- GUARDARÁ A SENHA
-
+    mr = mc.fetchall()
+    for x in mr:
+        #---SEPARA SOMENTE OS VALORES DO ID DO BANCO---#
+        xa = str(x).split()
+        xb1 = xa[0]
+        xc1 = [int(xb1[1])]
+        #---SEPARA SOMENTE OS VALORES DO NOME DO BANCO---#
+        xb2 = xa[1]
+        xc2 = str(xb2[1:-2])
+        #---SEPARA SOMENTE OS VALORES DA SENHA DO BANCO---#
+        xb3 = xa[2]
+        xc3 = int(xb3[:-1])
+        #---SE OS VALORES DOS ENTRYS DA JANELA INICIAL ESTIVEREM NO BANCO, CRIARÁ A JANELA DE CADASTRO---#
         if xc2 == str(entry_user.get()) and xc3 == int(entry_senha.get()):
-            janela2.deiconify()
-            janela2.title(string='Cadastrar produtos')
-            janela.withdraw()
-            janela.destroy()
-            global entry_1
-            global entry_2
-            global entry_3
-            global entry_4
-            entry_1 = Entry(janela2)
-            entry_1.place(x=20, y=40, width=150)
-            entry_2 = Entry(janela2)
-            entry_2.place(x=20, y=100, width=150)
-            entry_3 = Entry(janela2)
-            entry_3.place(x=225, y=40, width=150)
-            entry_4 = Entry(janela2)
-            entry_4.place(x=225, y=100, width=150)
-            lbl1 = Label(janela2, text='Qual o nome do produto?')
-            lbl1.place(x=20, y=10)
-            lbl2 = Label(janela2, text='Qual é o preço do produto?')
-            lbl2.place(x=20, y=70)
-            lbl3 = Label(janela2, text='ID do produto')
-            lbl3.place(x=225, y=10)
-            lbl4 = Label(janela2, text='Nome do produto')
-            lbl4.place(x=225, y=70)
-            btn_cadastrar = Button(janela2, text='Cadastrar', command=exportar_dados)
+            #---VARIÁVEIS GLOBAIS---#
+            global entry_in_nome
+            global entry_in_preco
+            global entry_ex_id
+            global entry_ex_nome
+            #---CRIAÇÃO EM SI DA JANELA DE CADASTROS---#
+            janelaCadatro = Tk()
+            janelaCadatro.geometry('400x500')
+            janelaCadatro.title(string='Cadastrar produtos')
+            janelaInicial.withdraw()
+            janelaInicial.destroy()
+            #---ENTRADAS JANELA CADASTRO---#
+            entry_in_nome = Entry(janelaCadatro)
+            entry_in_nome.place(x=20, y=40, width=150)
+            entry_in_preco = Entry(janelaCadatro)
+            entry_in_preco.place(x=20, y=100, width=150)
+            entry_ex_id = Entry(janelaCadatro)
+            entry_ex_id.place(x=225, y=40, width=150)
+            entry_ex_nome = Entry(janelaCadatro)
+            entry_ex_nome.place(x=225, y=100, width=150)
+            #---LABELS JANELA CADASTRO---#
+            lbl_in_nome = Label(janelaCadatro, text='Qual o nome do produto?')
+            lbl_in_nome.place(x=20, y=10)
+            lbl_in_preco = Label(janelaCadatro, text='Qual é o preço do produto?')
+            lbl_in_preco.place(x=20, y=70)
+            lbl_ex_id = Label(janelaCadatro, text='ID do produto')
+            lbl_ex_id.place(x=225, y=10)
+            lbl_ex_nome = Label(janelaCadatro, text='Nome do produto')
+            lbl_ex_nome.place(x=225, y=70)
+            #---BOTÕES JANELA CADASTRO---#
+            btn_cadastrar = Button(janelaCadatro, text='Cadastrar', command=inserir_dados)
             btn_cadastrar.place(x=20, y=130, width=70, height=30)
-            btn_deletar = Button(janela2, text='Deletar', command=excluir_dados)
+            btn_deletar = Button(janelaCadatro, text='Deletar', command=excluir_dados)
             btn_deletar.place(x=305, y=130, width=70, height=30)
 
-janela = Tk()
-janela.title(string='Inicio')
-janela.geometry('400x500')
+#--------------------JANELA INICIAL--------------------#
+janelaInicial = Tk()
+janelaInicial.title(string='Inicio')
+janelaInicial.geometry('400x500')
 imagem = PhotoImage(file= 'C:/Users/hugot/OneDrive/Imagens/Saved Pictures/pizza.png')
-lbl_imagem = Label(janela, image=imagem)
+#---LABELS JANELA INICIAL---#
+lbl_imagem = Label(janelaInicial, image=imagem)
 lbl_imagem.place(x=0, y=0)
-lbl_user = Label(janela, text='Insira um user admin', background='#ffffff', font='arial 10')
+lbl_user = Label(janelaInicial, text='Insira um user admin', background='#ffffff', font='arial 10')
 lbl_user.place(x=123, y=70 )
-lbl_senha = Label(janela, text='Insira sua senha', background='#ffffff', font='arial 10')
+lbl_senha = Label(janelaInicial, text='Insira sua senha', background='#ffffff', font='arial 10')
 lbl_senha.place(x=123, y=120)
-
-
-entry_user = Entry(janela)
+#---ENTRADAS JANELA INICIAL---#
+entry_user = Entry(janelaInicial)
 entry_user.place(x=125, y=90, width=150)
-entry_senha = Entry(janela)
+entry_senha = Entry(janelaInicial)
 entry_senha.place(x=125, y=140, width=150)
-
-btn_entrar = Button(janela, background='#a72300', command=janela2)
+#BOTÕES JANELA INICIAL---#
+btn_entrar = Button(janelaInicial, background='#a72300', command=janela_cadasto_abrir)
 btn_entrar.place(x=150, y=200, width=100)
-
-janela.mainloop()
+janelaInicial.mainloop()
